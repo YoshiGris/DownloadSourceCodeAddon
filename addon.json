@@ -1,0 +1,10 @@
+{
+  "author": "YoshiLeGris",
+  "version": 1.0,
+  "sce_version_min": 1.0,
+  "name": "Download Source Code TEST",
+  "type": "addon",
+  
+  "assets_js": [ "\\assets\\jquery.js" ],
+  "assets_css": [ "\\style.css" ]
+}
