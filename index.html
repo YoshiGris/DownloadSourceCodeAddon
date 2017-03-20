@@ -8,48 +8,61 @@
 -->
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=yes" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=yes" />
 
-    <script type='text/javascript'>
-        var url = "", count = 0;
-
-        function downloadCode()
-        {
-            url = $('#url_dl').val();
-
-            if (url.indexOf("http://") == -1)
-                url = "http://" + $('#url_dl').val();
-
-            $('#view').attr('src', url);
-            SCE.getCode(url).then(function (result) { SCE.setCode(result); }); //Download and set code in the editor !
-            $("#tt").html("Link: " + url);
-
-        }
-
-        $(window).load(function () //When the page is loaded...
-        {
-            //Enter button function
-            $('#url_dl').onkeypress = function (e) {
-                if (!e) e = window.event;
-                var keyCode = e.keyCode || e.which;
-                if (keyCode == '13') {
-                    downloadCode();
-                    return false;
-                }
-            }
-        });
-
+	<script type="text/javascript">
+		/** MAIN FUNCTION */
+		function main(url, confirmed) {
+			url = url || '';
+			confirmed = confirmed || false;
+			
+			if(url != '') {
+				if (url.indexOf('http://') == -1 && url.indexOf('https://') == -1)
+					url = 'http://' + url;
+				
+				$('#view').attr('src', url);
+				$('#tt').html('Link: ' + url);
+				SCE.getCode(url).then(function (result) {
+					if(result != '') {
+						if(SCE.getActualCode() == '' || confirmed) {
+							$('#confirm_dl').hide();
+							SCE.setCode(result);
+						} else $('#confirm_dl').show();
+					} else $('#error').html('Downloaded source code is empty');
+				});
+			} else $('#error').html('Please type an URL first');
+		}
+		
+		/** EVENT CONTROLLER */
+		$(document).ready(function () {
+			/** Download Button Click */
+			$('#button_dl').click(function () { main($('#url_dl').val()); });
+			
+			/** 'Enter' Key Pressed */
+			$('#url_dl').keypress(function (e) {
+				if (!e) e = window.event;
+				var keyCode = e.keyCode || e.which;
+				if (keyCode == '13') {
+					main($('#url_dl').val());
+					return false;
+				}
+			});
+			
+			/** Confirm Button Click */
+			$('#confirm_dl').click(function () { main($('#url_dl').val(), true); });
+		});
     </script>
 </head>
 
 <body>
-    <div style="background-color: rgba(0, 0, 0, 0.5);">
-        <input type="text" id="url_dl" style="height: 20px; width: 100%; margin-top: 10px; margin-bottom: 10px;" placeholder="Link (ex: http://www.survivalisteproject.net)">
-    </div>
+	<div style="background-color: rgba(0, 0, 0, 0.5);">
+		<input type="text" id="url_dl" style="height: 20px; width: 100%; margin-top: 10px; margin-bottom: 10px;" placeholder="Link (ex: http://www.survivalisteproject.net)">
+	</div>
 
-    <input id="button_dl" type="button" value="Download and set code !" onclick="downloadCode()" style="width: 100%" />
-    <p id="tt" style="margin-top: 10px; text-align: center; width: 100%;"></p>
-    <iframe id="view" style="width: calc(100% - 5px); height: 400px;"/>
-
+	<button id="button_dl" type="button" style="width: 100%">Download code!</button>
+	<button id="confirm_dl" type="button" style="display: none; width: 100%">Confirm overwriting your file code</button>
+	<p id="tt" style="margin-top: 10px; text-align: center; width: 100%;"></p>
+	<p id="error" style="margin-top: 10px; text-align: center; width: 100%;"></p>
+	<iframe id="view" style="width: calc(100% - 5px); height: 400px;"/>
 </body>
