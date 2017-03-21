@@ -23,14 +23,14 @@
 				
 				$('#view').attr('src', url);
 				$('#tt').html('Link: ' + url);
-				SCE.getCode(url).then(function (result) {
-					if(result != '') {
-						if(SCE.getActualCode() == '' || confirmed) {
+				if(SCE.getActualCode() == '' || confirmed) {
+					SCE.getCode(url).then(function (result) {
+						if(result != '') {
 							$('#confirm_dl').hide();
 							SCE.setCode(result);
-						} else $('#confirm_dl').show();
-					} else $('#error').html('Downloaded source code is empty');
-				});
+						} else $('#error').html('Downloaded source code is empty');
+					});
+				} else $('#confirm_dl').show();
 			} else $('#error').html('Please type an URL first');
 		}
 		
